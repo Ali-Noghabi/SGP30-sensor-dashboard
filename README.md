@@ -7,7 +7,7 @@
 
 ### install ide
 - install arduino ide base on you OS
-for manjaro
+#### for manjaro
 ```
 flatpak install cc.arduino.IDE2
 ```
