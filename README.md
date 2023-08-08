@@ -23,3 +23,14 @@ In your Arduino IDE, go to Sketch> Include Library>Library manager
 - Search for AVision_ESP8266 by A-Vision and install it with all linked libs
 - Search for ArduinoJson by Benoit Blanchon and install it
 - Search for Adafruit SGP30 Sensor by Adafruit and install it with all linked libs
+
+## Python server 
+- install python base on your OS
+- install python-websockets
+```
+manjaro:
+sudo pacman -S python-websockets
+windows:
+pip install websockets
+```
+- run pythonServer.py
