@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 
 # Create or connect to the SQLite database
-conn = sqlite3.connect('sensor_data.db')
+conn = sqlite3.connect('databases\sensor_data.db')
 cursor = conn.cursor()
 hostname = "localhost"
 port = 5000
