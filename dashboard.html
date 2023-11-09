@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WebSocket Example</title>
+    <script src="node_modules/raphael/raphael.min.js"></script>
+    <script src="node_modules/justgage/justgage.js"></script>
+    <script src="node_modules/chart.js/dist/chart.umd.js"></script>
+    <script src="node_modules/moment/min/moment.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-moment/1.0.1/chartjs-adapter-moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.9/dist/flatpickr.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.9/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_red.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        body {
+            background-color: black;
+        }
+
+        .datetime-picker-container {
+            position: relative;
+        }
+
+        .datetime-picker-input {
+            background-color: #222;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            width: 250px;
+            border-radius: 10px 10px 10px 10px;
+        }
+
+        #historianButton {
+            background-color: #222;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            width: 100px;
+            border-radius: 10px 10px 10px 10px;
+        }
+
+        #gauge-container {
+            background-color: #292828;
+            margin: 5px;
+        }
+
+        #chart-container {
+            background-color: #292828;
+            margin: 5px;
+        }
+
+        #gauge-firstrow {
+            margin-left: 400px;
+        }
+
+        #gauge-secoundrow {
+            margin-left: 400px;
+        }
+
+        #chart-buttons {
+            margin-left: 450px;
+        }
+
+        #line-chart {
+            margin: 20px;
+        }
+
+        /* 
+        #eco2-containter {
+            background-color: #292828;
+            margin: 5px;
+        }
+
+        #rawh2-containter {
+            background-color: #292828;
+            margin: 5px;
+        }
+
+        #rawethanol-containter {
+            background-color: #292828;
+            margin: 5px;
+        } */
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid" id="gauge-container">
+        <br />
+        <div class="row" id="gauge-firstrow">
+            <div class="col-md-3">
+                <div id="tvoc-containter">
+                    <div id="tvoc-gauge"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div id="eco2-containter">
+                    <div id="eco2-gauge"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div id="rawh2-containter">
+                    <div id="rawh2-gauge"></div>
+                </div>
+            </div>
+
+        </div>
+        <br />
+        <div class="row" id="gauge-secoundrow">
+            <div class="col-md-3">
+                <div id="rawethanol-containter">
+                    <div id="rawethanol-gauge"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid" id="chart-container">
+        <div class="row" id="chart-buttons">
+            <br />
+            <div class="col-md-3">
+                <input type="text" id="start-datetime-picker" placeholder="Select Start Date"
+                    class="datetime-picker-input">
+            </div>
+            <div class="col-md-3">
+                <input type="text" id="end-datetime-picker" placeholder="Select End Date" class="datetime-picker-input">
+            </div>
+            <div class="col-md-3">
+                <button onclick="buttonClicked()" id="historianButton">Click me</button>
+            </div>
+        </div>
+        <div class="row">
+            <br />
+            <canvas id="line-chart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        
+        var hostname = "ws://localhost:5000";
+        const startPicker = document.getElementById('start-datetime-picker');
+
+        flatpickr(startPicker, {
+            enableTime: true,
+            dateFormat: "Y-M-D H:i:S", // Include the 'S' to display seconds
+            theme: "material_red",
+            allowInput: true,
+            noCalendar: false,
+            altInput: true,
+            altFormat: "Y/m/d H:i:S", // Include the 'S' to display seconds
+            mode: "single",
+        });
+        const endPicker = document.getElementById('end-datetime-picker');
+
+        flatpickr(endPicker, {
+            enableTime: true,
+            dateFormat: "Y-M-D H:i:S", // Include the 'S' to display seconds
+            theme: "material_red",
+            allowInput: true,
+            noCalendar: false,
+            altInput: true,
+            altFormat: "Y/m/d H:i:S", // Include the 'S' to display seconds
+            mode: "single",
+        });
+
+        var ctx = document.getElementById('line-chart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            displayFormats: {
+                                day: 'MMM DD'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        },
+                        adapter: 'moment'
+                    },
+                    y: {
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Value'
+                        },
+                        ticks: {
+                            font: {
+                                size: 15,
+                            }
+                        }
+                    },
+                    y1: {
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Temprature'
+                        },
+                        ticks: {
+                            font: {
+                                size: 15,
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                size: 17
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        function validateDateTimeInput() {
+            const startValue = startPicker.value;
+            const endValue = endPicker.value;
+
+            const startDate = flatpickr.parseDate(startValue, "Y-m-d H:i:S");
+            const endDate = flatpickr.parseDate(endValue, "Y-m-d H:i:S");
+
+            const isValid = startDate instanceof Date && endDate instanceof Date;
+            return isValid;
+        }
+
+        let values = [];
+        let tempValues = [];
+        let values2 = [];
+        let tempValues2 = [];
+
+        function buttonClicked() {
+            if (validateDateTimeInput()) {
+                const socket = new WebSocket(hostname);
+
+                socket.onopen = function (event) {
+                    console.log('Current running WebSocket opened');
+
+                    const startSelectedDate = startPicker._flatpickr.selectedDates[0]; // Get the selected date
+                    const startFormattedDateTime = startPicker._flatpickr.formatDate(startSelectedDate, "Y-m-d H:i:S"); // Format the date
+
+                    const endSelectedDate = endPicker._flatpickr.selectedDates[0]; // Get the selected date
+                    const endFormattedDateTime = endPicker._flatpickr.formatDate(endSelectedDate, "Y-m-d H:i:S"); // Format the date
+
+                    socket.send("getHistorianData|" + startFormattedDateTime + "|" + endFormattedDateTime);
+                };
+
+                socket.onmessage = function (event) {
+                    console.log('WebSocket message received:', event.data);
+                    const dataArray = JSON.parse(event.data);
+
+                    dataArray.forEach(function (data) {
+                        var time = data.Timestamp
+                        // timestamps.push(data.Timestamp);
+                        if (data.Sensor == "sensor1") {
+                            values.push({ x: time, y: data.TVOC });
+                            tempValues.push({ x: time, y: data.Temperature });
+
+                        }
+                        else if (data.Sensor == "sensor2") {
+                            values2.push({ x: time, y: data.TVOC });
+                            tempValues2.push({ x: time, y: data.Temperature });
+                        }
+
+                    });
+
+                    updateChart(); // Call a separate function to update the chart with the new data
+                };
+
+                socket.onclose = function (event) {
+                    console.log('Current running WebSocket closed');
+                };
+            }
+            else {
+                alert("This is a notification message");
+            }
+        }
+
+        function updateChart() {
+
+            const chart = Chart.getChart("line-chart");
+            console.log(Chart.version);
+
+            // chart.data.labels = timestamps;
+            // console.log("time lenght = " + timestamps.length + "val1 lenght = " + values.length + "val2 lenght = " + values2.length)
+
+
+            chart.data.datasets = [
+                {
+                    data: values,
+                    label: "Sensor1-TVOC",
+                    borderColor: "#3cba9f",
+                    pointRadius: 0,
+                    fill: false,
+                    yAxisID: 'y'
+                },
+                {
+                    data: values2,
+                    label: "Sensor2-TVOC",
+                    borderColor: "#b63cba",
+                    pointRadius: 0,
+                    fill: false,
+                    yAxisID: 'y'
+                },
+                {
+                    data: tempValues,
+                    label: "Sensor1-Temperature",
+                    borderColor: "#ffa600",
+                    pointRadius: 0,
+                    fill: false,
+                    yAxisID: 'y1'
+                },
+                {
+                    data: tempValues2,
+                    label: "Sensor2-Tempreture",
+                    borderColor: "#003f5c",
+                    pointRadius: 0,
+                    fill: false,
+                    yAxisID: 'y1'
+                }
+            ];
+
+
+            chart.update();
+        }
+
+
+        var tvocGauge = new JustGage({
+            id: "tvoc-gauge",
+            label: "TVOC",
+            labelFontColor: "white",
+            labelMinFontSize: 12,
+            value: -1,
+            valueFontColor: "white",
+            textRenderer: function (num) {
+                return num + " ppb";
+            },
+            min: 0,
+            max: 200,
+            gaugeWidthScale: 0.6,
+            gaugeColor: "gray",
+            minLabelMinFontSize: 15,
+            maxLabelMinFontSize: 15
+        });
+
+        var eco2Gauge = new JustGage({
+            id: "eco2-gauge",
+            label: "eCO2",
+            labelFontColor: "white",
+            labelMinFontSize: 14,
+            value: -1,
+            valueFontColor: "white",
+            textRenderer: function (num) {
+                return num + " ppm";
+            },
+            min: 0,
+            max: 1500,
+            gaugeWidthScale: 0.6,
+            gaugeColor: "gray",
+            minLabelMinFontSize: 15,
+            maxLabelMinFontSize: 15
+        });
+
+        var rawh2Gauge = new JustGage({
+            id: "rawh2-gauge",
+            label: "Raw H2",
+            labelFontColor: "white",
+            labelMinFontSize: 15,
+            value: -1,
+            valueFontColor: "white",
+            min: 12500,
+            max: 14000,
+            decimals: 0,
+            gaugeWidthScale: 0.6,
+            gaugeColor: "gray",
+            minLabelMinFontSize: 15,
+            maxLabelMinFontSize: 15
+        });
+
+        var rawethanolGauge = new JustGage({
+            id: "rawethanol-gauge",
+            label: "Raw Ethanol",
+            labelMinFontSize: 15,
+            labelFontColor: "white",
+            value: -1,
+            valueFontColor: "white",
+            min: 18500,
+            max: 19200,
+            decimals: 0,
+            gaugeWidthScale: 0.6,
+            gaugeColor: "gray",
+            minLabelMinFontSize: 15,
+            maxLabelMinFontSize: 15
+        });
+
+        // function computeValueColor(value, min, max) {
+        //     // Calculate the percentage of the value within the min-max range
+        //     var percentage = (value - min) / (max - min);
+        //     console.log(value)
+        //     // Determine the color based on the percentage
+        //     if (percentage < 0.3) {
+        //         return '#008000';
+        //     } else if (percentage < 0.7) {
+        //         return '#FFA500';
+        //     } else {
+        //         return '#FF0000';
+        //     }
+        // }
+
+        // setInterval(() => {
+        //     tvocGauge.refresh(Math.random() * 100);
+        //     eco2Gauge.refresh(Math.random() * 100);
+        //     rawh2Gauge.refresh(Math.random() * 100);
+        //     rawethanolGauge.refresh(Math.random() * 100);
+
+        // }, 1000)
+
+        // Define the function to get the current running data
+        const getOnlineSensorData = function () {
+            const socket = new WebSocket(hostname);
+
+            socket.onopen = function (event) {
+                console.log('current running WebSocket opened');
+                socket.send('getOnlineData');
+            };
+
+            socket.onmessage = function (event) {
+                console.log('WebSocket message received:', event.data);
+                const data = JSON.parse(event.data);
+                tvocGauge.refresh(data.TVOC);
+                // tvocGauge.update('valueFontColor', computeValueColor(tvocGauge, tvocGauge.min, tvocGauge.max));
+                eco2Gauge.refresh(data.eCO2);
+                rawh2Gauge.refresh(data.rawH2);
+                rawethanolGauge.refresh(data.rawEthanol);
+                socket.close();
+            };
+
+            socket.onclose = function (event) {
+                console.log('current running WebSocket closed');
+            };
+        };
+
+        // Call the function to get the current running data every second
+        setInterval(getOnlineSensorData, 1000);
+
+
+    </script>
+</body>
+
+</html>
