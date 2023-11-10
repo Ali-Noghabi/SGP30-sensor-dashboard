@@ -150,7 +150,7 @@
                 <div class="group-box" id="sensorGroupBox">
                     <h2>sensor</h2>
                     <label class="tvoc-btn">
-                        <input type="checkbox" name="options" value="voc" checked> tvoc
+                        <input type="checkbox" name="options" value="tvoc" checked> tvoc
                     </label>
                     <label class="eco2-btn">
                         <input type="checkbox" name="options" value="eco2"> eco2
@@ -339,10 +339,23 @@
                                             displayFormats: {
                                                 day: 'MMM DD',
                                             },
+                                            unitStepSize: 1,  // Show day labels for every data point
+
+                                            // For smaller scales (e.g., when zoomed in), display hours
+                                            tooltipFormat: 'MMM DD, YYYY HH:mm',  // Format for tooltip when hovering
                                         },
                                         title: {
                                             display: true,
                                             text: 'Time',
+                                        },
+                                        ticks: {
+                                            font: {
+                                                color: 'white',
+                                                size: 20
+                                            }
+                                        },
+                                        grid: {
+                                            color: '#c0c0c0',  // Change the color of the grid lines to white
                                         },
                                         adapter: 'moment',
                                     },
@@ -372,54 +385,6 @@
                 color += letters[Math.floor(Math.random() * 16)];
             }
             return color;
-        }
-
-        function updateChart() {
-
-            const chart = Chart.getChart("line-chart");
-            console.log(Chart.version);
-
-            // chart.data.labels = timestamps;
-            // console.log("time lenght = " + timestamps.length + "val1 lenght = " + values.length + "val2 lenght = " + values2.length)
-
-
-            chart.data.datasets = [
-                {
-                    data: values,
-                    label: "Sensor1-TVOC",
-                    borderColor: "#3cba9f",
-                    pointRadius: 0,
-                    fill: false,
-                    yAxisID: 'y'
-                },
-                {
-                    data: values2,
-                    label: "Sensor2-TVOC",
-                    borderColor: "#b63cba",
-                    pointRadius: 0,
-                    fill: false,
-                    yAxisID: 'y'
-                },
-                {
-                    data: tempValues,
-                    label: "Sensor1-Temperature",
-                    borderColor: "#ffa600",
-                    pointRadius: 0,
-                    fill: false,
-                    yAxisID: 'y1'
-                },
-                {
-                    data: tempValues2,
-                    label: "Sensor2-Tempreture",
-                    borderColor: "#003f5c",
-                    pointRadius: 0,
-                    fill: false,
-                    yAxisID: 'y1'
-                }
-            ];
-
-
-            chart.update();
         }
 
 

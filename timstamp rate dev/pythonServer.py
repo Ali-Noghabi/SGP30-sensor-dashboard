@@ -97,7 +97,7 @@ def fetch_last_data_from_database():
 
 
 def fetch_data_between_timestamps(start_time, end_time, timestamp_rate, data_types, sensors):
-    print(start_time, end_time, timestamp_rate, data_types, sensors)
+    print("to fetch" , start_time, end_time, timestamp_rate, data_types, sensors)
     result = {}
 
     for data_type in data_types:
@@ -112,17 +112,23 @@ def fetch_data_between_timestamps(start_time, end_time, timestamp_rate, data_typ
         for row in rows:
             data = {
                 "Sensor": row[1],
-                "Timestamp": row[2],
-                "TVOC": row[3],
-                "eCO2": row[4],
-                "rawH2": row[5],
-                "rawEthanol": row[6],
-                "Temperature": row[7],
-                "Humidity": row[8]
+                "Timestamp": row[2]
             }
+            # Add columns to data only if the corresponding value is not None
+            if "tvoc" in sensors and row[3] is not None:
+                data["TVOC"] = row[3]
+            if "eco2" in sensors and row[4] is not None:
+                data["eCO2"] = row[4]
+            if "rawh2" in sensors and row[5] is not None:
+                data["rawH2"] = row[5]
+            if "rawethanol" in sensors and row[6] is not None:
+                data["rawEthanol"] = row[6]
+            if "temperature" in sensors and row[7] is not None:
+                data["Temperature"] = row[7]
+            if "humidity" in sensors and row[8] is not None:
+                data["Humidity"] = row[8]
             result[data_type].append(data)
 
-    print(result)
     return result
 
 
