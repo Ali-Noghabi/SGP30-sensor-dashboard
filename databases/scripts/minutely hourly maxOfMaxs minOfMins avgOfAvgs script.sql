@@ -1,37 +1,29 @@
 -- Create sensor_data_minutely_avg_of_avgs table
 CREATE TABLE IF NOT EXISTS sensor_data_minutely_avg_of_avgs (
-       id INTEGER PRIMARY KEY AUTOINCREMENT,
-       sensor TEXT,
-       minute_start TEXT,
-       avg_of_avg_tvoc REAL,
-       avg_of_avg_eco2 REAL,
-       avg_of_avg_rawh2 REAL,
-       avg_of_avg_rawethanol REAL,
-       avg_of_avg_temperature REAL,
-       avg_of_avg_humidity REAL
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sensor TEXT,
+    timestamp TEXT,
+    tvoc REAL,
+    eco2 REAL,
+    rawh2 REAL,
+    rawethanol REAL,
+    temperature REAL,
+    humidity REAL
 );
+
 -- Insert into sensor_data_minutely_avg_of_avgs table
-INSERT INTO sensor_data_minutely_avg_of_avgs (
-              sensor,
-              minute_start,
-              avg_of_avg_tvoc,
-              avg_of_avg_eco2,
-              avg_of_avg_rawh2,
-              avg_of_avg_rawethanol,
-              avg_of_avg_temperature,
-              avg_of_avg_humidity
-       )
-SELECT sensor,
-       strftime('%Y-%m-%d %H:%M:00', timestamp) AS minute_start,
-       AVG(tvoc) AS avg_of_avg_tvoc,
-       AVG(eco2) AS avg_of_avg_eco2,
-       AVG(rawh2) AS avg_of_avg_rawh2,
-       AVG(rawethanol) AS avg_of_avg_rawethanol,
-       AVG(temperature) AS avg_of_avg_temperature,
-       AVG(humidity) AS avg_of_avg_humidity
+INSERT INTO sensor_data_minutely_avg_of_avgs (sensor, timestamp, tvoc, eco2, rawh2, rawethanol, temperature, humidity)
+SELECT sensor, strftime('%Y-%m-%d %H:%M:00', timestamp) AS timestamp,
+       AVG(tvoc) AS tvoc,
+       AVG(eco2) AS eco2,
+       AVG(rawh2) AS rawh2,
+       AVG(rawethanol) AS rawethanol,
+       AVG(temperature) AS temperature,
+       AVG(humidity) AS humidity
 FROM sensor_data
-GROUP BY sensor,
-       strftime('%Y-%m-%d %H:%M:00', timestamp);
+GROUP BY sensor, strftime('%Y-%m-%d %H:%M:00', timestamp);
+
+
 -- Create sensor_data_minutely_max_of_maxs table
 CREATE TABLE IF NOT EXISTS sensor_data_minutely_max_of_maxs (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
