@@ -185,6 +185,9 @@
             <div class="col-md-3">
                 <button onclick="buttonClicked()" id="historianButton">Click me</button>
             </div>
+            <div class="col-md-3">
+                <button onclick="downloadButtonClicked()" id="historianButton">Download png</button>
+            </div>
         </div>
         <div class="row">
             <br />
@@ -196,6 +199,7 @@
 
         var hostname = "ws://localhost:5000";
         const startPicker = document.getElementById('start-datetime-picker');
+        var sensorsToSave = "";
 
         flatpickr(startPicker, {
             enableTime: true,
@@ -235,6 +239,21 @@
         let tempValues = [];
         let values2 = [];
         let tempValues2 = [];
+
+        function downloadButtonClicked() {
+            var dataToSave = startPicker.value;
+            var canvas = document.getElementById('line-chart');
+            var dataURL = canvas.toDataURL('image/png');
+
+            // Create a temporary link element
+            var link = document.createElement('a');
+            link.href = dataURL;
+            link.download = dataToSave + sensorsToSave + '.png';
+
+            // Trigger the download
+            link.click();
+        }
+        var colorIndex = 0;
 
         function buttonClicked() {
             if (validateDateTimeInput()) {
@@ -284,7 +303,9 @@
 
                         var datasets = {};
                         var yAxes = {};
-
+                        
+                        colorIndex = 0;
+                        sensorsToSave = "";
                         // Iterate over avg_of_avgs, max_of_maxs, and min_of_mins
                         ['avg_of_avgs', 'max_of_maxs', 'min_of_mins'].forEach(function (dataType) {
                             if (data[dataType]) {
@@ -322,6 +343,7 @@
                                                             // You can add more tick customization here
                                                         },
                                                     };
+                                                    sensorsToSave += param;
                                                 }
                                             }
 
@@ -385,8 +407,19 @@
                         yAxes = new Map(yAxesArray);
 
                         // Create the chart using Chart.js
-                        var ctx = document.getElementById('line-chart').getContext('2d');
-                        var myChart = new Chart(ctx, {
+
+                        var canvas = document.getElementById('line-chart');
+                        var existingChart = Chart.getChart(canvas);
+                        if (existingChart) {
+                            // If it exists, destroy it
+                            existingChart.destroy();
+                        }
+
+                        // Get the 2d context of the canvas
+                        var ctx = canvas.getContext('2d');
+                        // var ctx = document.getElementById('line-chart').getContext('2d');
+                        // myChart.destroy();
+                        myChart = new Chart(ctx, {
                             type: 'line',
                             data: {
                                 datasets: chartData,
@@ -456,7 +489,7 @@
             '#95a5a6'  // Concrete
         ];
 
-        var colorIndex = 0;
+        
 
         function getNextColor() {
             var color = colors[colorIndex];
@@ -465,53 +498,7 @@
         }
 
 
-        function updateChart() {
-
-            const chart = Chart.getChart("line-chart");
-            console.log(Chart.version);
-
-            // chart.data.labels = timestamps;
-            // console.log("time lenght = " + timestamps.length + "val1 lenght = " + values.length + "val2 lenght = " + values2.length)
-
-
-            chart.data.datasets = [
-                {
-                    data: values,
-                    label: "Sensor1-TVOC",
-                    borderColor: "#3cba9f",
-                    pointRadius: 0,
-                    fill: false,
-                    yAxisID: 'y'
-                },
-                {
-                    data: values2,
-                    label: "Sensor2-TVOC",
-                    borderColor: "#b63cba",
-                    pointRadius: 0,
-                    fill: false,
-                    yAxisID: 'y'
-                },
-                {
-                    data: tempValues,
-                    label: "Sensor1-Temperature",
-                    borderColor: "#ffa600",
-                    pointRadius: 0,
-                    fill: false,
-                    yAxisID: 'y1'
-                },
-                {
-                    data: tempValues2,
-                    label: "Sensor2-Tempreture",
-                    borderColor: "#003f5c",
-                    pointRadius: 0,
-                    fill: false,
-                    yAxisID: 'y1'
-                }
-            ];
-
-
-            chart.update();
-        }
+        
 
 
         var tvocGauge = new JustGage({
