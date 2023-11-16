@@ -6,8 +6,8 @@ from datetime import datetime
 
 # Create or connect to the SQLite database
 # test
-conn = sqlite3.connect('databases\main.db')  # windows
-# conn = sqlite3.connect('databases/sensor_data.db') #linux
+# conn = sqlite3.connect('databases\main.db')  # windows
+conn = sqlite3.connect('databases/main.db') #linux
 cursor = conn.cursor()
 hostname = "localhost"
 port = 5000

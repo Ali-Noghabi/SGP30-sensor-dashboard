@@ -20,7 +20,8 @@
 
     <style>
         body {
-            background-color: black;
+            background-color: #fff;
+            color: #222;
         }
 
         .datetime-picker-container {
@@ -28,21 +29,21 @@
         }
 
         .datetime-picker-input {
-            background-color: #222;
-            color: #fff;
+            background-color: #fff;
+            color: #222;
             padding: 10px;
-            border: none;
+            border: 1px solid #ccc;
             width: 250px;
-            border-radius: 10px 10px 10px 10px;
+            border-radius: 10px;
         }
 
         #historianButton {
-            background-color: #222;
-            color: #fff;
+            background-color: #fff;
+            color: #222;
             padding: 10px;
-            border: none;
+            border: 1px solid #ccc;
             width: 100px;
-            border-radius: 10px 10px 10px 10px;
+            border-radius: 10px;
         }
 
         #gauge-container {
@@ -51,8 +52,10 @@
         }
 
         #chart-container {
-            background-color: #292828;
+            background-color: #f4f4f4;
             margin: 5px;
+            padding: 10px;
+            border-radius: 10px;
         }
 
         #gauge-firstrow {
@@ -72,13 +75,13 @@
         }
 
         .group-box {
-            border: 1px solid #c0c0c0;
+            border: 1px solid #ccc;
             border-radius: 5px;
             padding: 10px;
             margin: 10px;
             width: 300px;
-            color: #fff;
-            background-color: #222;
+            color: #222;
+            background-color: #fff;
         }
 
         .option-btn {
@@ -299,8 +302,8 @@
                                                     label: `${dataType}_${sensor}_${param}`,
                                                     data: [],
                                                     fill: false,
-                                                    borderColor: getRandomColor(),
                                                     yAxisID: param,  // Assign a unique yAxisID for each dataset
+                                                    borderColor: getNextColor(),
                                                 };
 
                                                 // Create a new y-axis for each parameter
@@ -434,13 +437,80 @@
             }
         }
 
-        function getRandomColor() {
-            var letters = '0123456789ABCDEF';
-            var color = '#';
-            for (var i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
+        var colors = [
+            '#3498db', // Blue
+            '#2ecc71', // Green
+            '#e74c3c', // Red
+            '#f39c12', // Orange
+            '#9b59b6', // Purple
+            '#1abc9c', // Teal
+            '#d35400', // Pumpkin
+            '#7f8c8d', // Gray
+            '#16a085', // Dark Green
+            '#c0392b', // Dark Red
+            '#e67e22', // Carrot
+            '#8e44ad', // Wisteria
+            '#27ae60', // Nephritis
+            '#f1c40f', // Sunflower
+            '#34495e', // Wet Asphalt
+            '#95a5a6'  // Concrete
+        ];
+
+        var colorIndex = 0;
+
+        function getNextColor() {
+            var color = colors[colorIndex];
+            colorIndex = (colorIndex + 1) % colors.length;
             return color;
+        }
+
+
+        function updateChart() {
+
+            const chart = Chart.getChart("line-chart");
+            console.log(Chart.version);
+
+            // chart.data.labels = timestamps;
+            // console.log("time lenght = " + timestamps.length + "val1 lenght = " + values.length + "val2 lenght = " + values2.length)
+
+
+            chart.data.datasets = [
+                {
+                    data: values,
+                    label: "Sensor1-TVOC",
+                    borderColor: "#3cba9f",
+                    pointRadius: 0,
+                    fill: false,
+                    yAxisID: 'y'
+                },
+                {
+                    data: values2,
+                    label: "Sensor2-TVOC",
+                    borderColor: "#b63cba",
+                    pointRadius: 0,
+                    fill: false,
+                    yAxisID: 'y'
+                },
+                {
+                    data: tempValues,
+                    label: "Sensor1-Temperature",
+                    borderColor: "#ffa600",
+                    pointRadius: 0,
+                    fill: false,
+                    yAxisID: 'y1'
+                },
+                {
+                    data: tempValues2,
+                    label: "Sensor2-Tempreture",
+                    borderColor: "#003f5c",
+                    pointRadius: 0,
+                    fill: false,
+                    yAxisID: 'y1'
+                }
+            ];
+
+
+            chart.update();
         }
 
 
