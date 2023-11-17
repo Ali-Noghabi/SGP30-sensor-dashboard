@@ -1,3 +1,6 @@
+--Remove Outlier data
+DELETE FROM sensor_data WHERE tvoc = 60000;
+
 -- Create sensor_data_minutely_avg_of_avgs table
 CREATE TABLE IF NOT EXISTS sensor_data_minutely_avg_of_avgs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,7 +25,6 @@ SELECT sensor, strftime('%Y-%m-%d %H:%M:00', timestamp) AS timestamp,
        AVG(humidity) AS humidity
 FROM sensor_data
 GROUP BY sensor, strftime('%Y-%m-%d %H:%M:00', timestamp);
-
 
 -- Create sensor_data_minutely_max_of_maxs table
 CREATE TABLE IF NOT EXISTS sensor_data_minutely_max_of_maxs (
@@ -58,6 +60,7 @@ SELECT sensor,
 FROM sensor_data
 GROUP BY sensor,
        strftime('%Y-%m-%d %H:%M:00', timestamp);
+
 -- Create sensor_data_minutely_min_of_mins table
 CREATE TABLE IF NOT EXISTS sensor_data_minutely_min_of_mins (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -92,6 +95,7 @@ SELECT sensor,
 FROM sensor_data
 GROUP BY sensor,
        strftime('%Y-%m-%d %H:%M:00', timestamp);
+
 -- Create sensor_data_hourly_avg_of_avgs table
 CREATE TABLE IF NOT EXISTS sensor_data_hourly_avg_of_avgs (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -126,6 +130,7 @@ SELECT sensor,
 FROM sensor_data
 GROUP BY sensor,
        strftime('%Y-%m-%d %H:00:00', timestamp);
+
 -- Create sensor_data_hourly_max_of_maxs table
 CREATE TABLE IF NOT EXISTS sensor_data_hourly_max_of_maxs (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -160,6 +165,7 @@ SELECT sensor,
 FROM sensor_data
 GROUP BY sensor,
        strftime('%Y-%m-%d %H:00:00', timestamp);
+
 -- Create sensor_data_hourly_min_of_mins table
 CREATE TABLE IF NOT EXISTS sensor_data_hourly_min_of_mins (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
