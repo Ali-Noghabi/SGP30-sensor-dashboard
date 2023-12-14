@@ -303,7 +303,7 @@
 
                         var datasets = {};
                         var yAxes = {};
-                        
+
                         colorIndex = 0;
                         sensorsToSave = "";
                         // Iterate over avg_of_avgs, max_of_maxs, and min_of_mins
@@ -320,7 +320,7 @@
                                             // Initialize the dataset if it doesn't exist
                                             if (!datasets[datasetKey]) {
                                                 datasets[datasetKey] = {
-                                                    label: `${dataType}_${sensor}_${param}`,
+                                                    label: `${sensor}_${param}`,
                                                     data: [],
                                                     fill: false,
                                                     yAxisID: param,  // Assign a unique yAxisID for each dataset
@@ -453,6 +453,16 @@
                                     },
                                     y: yAxes,  // Assign the custom y-axes
                                 },
+                                plugins: {
+                                    legend: {
+                                        labels: {
+                                            font: {
+                                                size: 30,
+                                                color: 'white',
+                                            },
+                                        },
+                                    },
+                                }
                             },
                         });
 
@@ -489,7 +499,7 @@
             '#95a5a6'  // Concrete
         ];
 
-        
+
 
         function getNextColor() {
             var color = colors[colorIndex];
@@ -498,7 +508,7 @@
         }
 
 
-        
+
 
 
         var tvocGauge = new JustGage({
