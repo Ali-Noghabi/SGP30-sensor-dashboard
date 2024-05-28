@@ -93,7 +93,7 @@ This project aims to monitor and analyze the relationship between various gases 
 
 To set up the hardware, follow the wiring diagram below. This diagram shows how to connect the ESP8266 NodeMCU microcontroller to the SGP30, HTU21DF, and SHT20 sensors using the SDA and SCL ports. It also includes connections for two LEDs that indicate server connection status and data receiving status.
 
-![Wiring Diagram](doc\readme\wiring.png)
+![Wiring Diagram](doc/readme/wiring.png)
 
 ### Connections
 
