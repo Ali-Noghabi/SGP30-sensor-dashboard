@@ -4,7 +4,7 @@
 
 This project aims to monitor and analyze the relationship between various gases and fruit ripening. We use an ESP8266 NodeMCU microcontroller with SGP30, HTU21, and SHT20 sensors to gather data on VOC gases, CO2, H2, ethanol, temperature, and humidity. The collected data is sent to a Python server via WebSocket, which can handle multiple clients simultaneously. The data is stored in an SQLite database, cleaned, and prepared for future data mining to find correlations between the gases and fruit ripening.
 
-![image](doc\readme\project-monitoring.png)
+![image](doc/readme/project-monitoring.png)
 ## Features
 
 - **Real-time monitoring**: 
@@ -15,7 +15,7 @@ This project aims to monitor and analyze the relationship between various gases 
 - **Multiple sensor modules**:
   - Multiple ESP8266 NodeMCU microcontrollers are used to gather data under different conditions to ensure a comprehensive and valid dataset.
   - Each microcontroller can independently collect data from its respective sensors and send it to the central server.
-  
+
 - **Data communication and storage**:
   - Data is transmitted from the ESP8266 microcontrollers to the Python server using WebSocket, ensuring real-time data transfer.
   - The Python server can handle multiple client connections at once, making it scalable for larger setups.
