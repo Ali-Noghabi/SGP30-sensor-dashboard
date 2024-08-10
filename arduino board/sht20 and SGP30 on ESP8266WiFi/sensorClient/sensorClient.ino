@@ -3,17 +3,17 @@
 #include <ArduinoJson.h>
 #include <Wire.h>
 #include "Adafruit_SGP30.h"
-#include "DFRobot_SHT20.h"
+// #include "DFRobot_SHT20.h"
 
-const char* ssid = "wifiName";
-const char* password = "wifiPassword";
-const char* host = "serverIp";
+const char* ssid = "Datall-2";
+const char* password = "z1x2c3v4b5n6m0";
+const char* host = "localhost";
 const int port = 5000; //serverPort
 const int connectionStatus_PIN = 12;
 const int isReceving_PIN = 14;
 WebSocketsClient webSocket;
 Adafruit_SGP30 sgp;
-DFRobot_SHT20 sht20(&Wire, SHT20_I2C_ADDR);
+// DFRobot_SHT20 sht20(&Wire, SHT20_I2C_ADDR);
 // LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
@@ -46,9 +46,9 @@ void setup() {
       ;
   }
 
-  sht20.initSHT20();
-  delay(100);
-  Serial.println("Sensor init finish!");
+  // sht20.initSHT20();
+  // delay(100);
+  // Serial.println("Sensor init finish!");
 
   // lcd.init();
   // // turn on LCD backlight                      
@@ -99,8 +99,10 @@ void loop() {
     Serial.print(rawethanol);
     Serial.println("");
 
-    float temperature =sht20.readHumidity();
-    float humidity = sht20.readTemperature();
+    // float temperature =sht20.readHumidity();
+    // float humidity = sht20.readTemperature();
+    float temperature =20;
+    float humidity = 31;
     Serial.print("Temp: ");
     Serial.print(temperature);
     Serial.print(" C");
@@ -119,11 +121,11 @@ void loop() {
     doc["Humidity"] = humidity;
     String message;
     serializeJson(doc, message);
-    webSocket.sendTXT(message);
+    // webSocket.sendTXT(message);
   }
 
   // Handle WebSocket events
-  webSocket.loop();
+  // webSocket.loop();
 }
 
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
