@@ -2,16 +2,19 @@
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Features](#features)
-- [Usage](#usage)
-- [Setup](#setup)
-  - [Arduino Setup](#arduino-setup)
-  - [Python Server Setup](#python-server-setup)
-- [Wiring and Connections](#wiring-and-connections)
-- [Report Images](#report-images)
-- [Future Work](#future-work)
-- [Conclusion](#conclusion)
+- [Fruit Ripening Monitoring System Using ESP8266 and VOC Sensors](#fruit-ripening-monitoring-system-using-esp8266-and-voc-sensors)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Features](#features)
+  - [Usage](#usage)
+  - [Setup](#setup)
+    - [Arduino Setup](#arduino-setup)
+    - [Python Server Setup](#python-server-setup)
+  - [Wiring and Connections](#wiring-and-connections)
+    - [Connections](#connections)
+  - [Report Images](#report-images)
+  - [Future Work](#future-work)
+  - [Conclusion](#conclusion)
 
 ## Overview
 
@@ -85,6 +88,13 @@ This project aims to monitor and analyze the relationship between various gases 
 2. **Install Python Websockets**
    - **Manjaro**: `sudo pacman -S python-websockets`
    - **Windows/Mac**: `pip install websockets`
+   - **pip**:
+   ```
+   python -m venv myenv
+   source myenv/bin/activate
+   pip install --upgrade pip
+   pip install websockets pandas matplotlib scipy
+
 
 3. **Run Python Server**
    - Execute `pythonServer.py` to start the server.

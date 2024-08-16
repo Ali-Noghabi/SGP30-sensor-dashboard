@@ -10,10 +10,10 @@
 #include "Adafruit_HTU21DF.h"
 
 //server
-const char* ssid = "Datall-2";
-const char* password = "z1x2c3v4b5n6m0";
-const char* host = "192.168.2.153";  //your server ip
-const int port = 5000;               //serverPort
+const char* ssid = "Datall-3";         //your wifi name
+const char* password = "Aa547896321";  //your wifi password
+const char* host = "192.168.1.102";    //your server ip
+const int port = 5000;                 //serverPort
 
 //sensor name
 const char* sensor_name = "sensor1";
@@ -109,21 +109,21 @@ void loop() {
     Serial.println(moisture);
 
     // if (tvoc < tvoc_threshold && eco2 < co2_threshold && rawh2 < rawh2_threshold && rawethanol < ethanol_threshold && temperature < temperature_threshold && humidity < humidity_threshold && moisture < moisture_threshold) {
-      StaticJsonDocument< 200 > doc;
-      doc["name"] = sensor_name;
-      doc["TVOC"] = tvoc;
-      doc["eCO2"] = eco2;
-      doc["rawH2"] = rawh2;
-      doc["rawEthanol"] = rawethanol;
-      doc["Temperature"] = temperature;
-      doc["Humidity"] = humidity;
-      doc["moisture"] = moisture;
-      String message;
-      serializeJson(doc, message);
-      webSocket.sendTXT(message);
-      digitalWrite(threshold_PIN, LOW);
-      Serial.println("inside threshold zone");
-      printRawDate(tvoc, eco2, rawh2, rawethanol, moisture, temperature, humidity, false);
+    StaticJsonDocument< 200 > doc;
+    doc["name"] = sensor_name;
+    doc["TVOC"] = tvoc;
+    doc["eCO2"] = eco2;
+    doc["rawH2"] = rawh2;
+    doc["rawEthanol"] = rawethanol;
+    doc["Temperature"] = temperature;
+    doc["Humidity"] = humidity;
+    doc["moisture"] = moisture;
+    String message;
+    serializeJson(doc, message);
+    webSocket.sendTXT(message);
+    digitalWrite(threshold_PIN, LOW);
+    Serial.println("inside threshold zone");
+    printRawDate(tvoc, eco2, rawh2, rawethanol, moisture, temperature, humidity, false);
     // } else {
     //   Serial.println("inside critical zone!!");
     //   printRawDate(tvoc, eco2, rawh2, rawethanol, moisture, temperature, humidity, true);
